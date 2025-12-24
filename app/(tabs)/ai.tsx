@@ -5,10 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Animated,
+  Image as RNImage,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image } from 'expo-image';
 import { Colors, Spacing, FontSizes, FontWeights, BorderRadius } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Card } from '@/components/ui/Card';
@@ -16,7 +15,20 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { mockPhotos } from '@/data/mockData';
+import { mockPhotos, workPhotoAssets } from '@/data/mockData';
+
+// Helper to get image source
+const getImageSource = (uri: string | number) => {
+  if (typeof uri === 'string') {
+    // Check if it's a key to our local assets
+    if (uri in workPhotoAssets) {
+      return workPhotoAssets[uri as keyof typeof workPhotoAssets];
+    }
+    // Otherwise treat as URL
+    return { uri };
+  }
+  return uri;
+};
 
 export default function AIScreen() {
   const colorScheme = useColorScheme() ?? 'light';
@@ -76,7 +88,7 @@ export default function AIScreen() {
             <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Pending</Text>
           </Card>
           <Card variant="outlined" style={styles.statCard}>
-            <Text style={[styles.statValue, { color: colors.primary }]}>94%</Text>
+            <Text style={[styles.statValue, { color: colors.primary }]}>96%</Text>
             <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Avg Score</Text>
           </Card>
         </View>
@@ -86,10 +98,10 @@ export default function AIScreen() {
         <Card variant="elevated" style={styles.analysisCard}>
           {/* Photo Preview */}
           <View style={styles.photoPreview}>
-            <Image
-              source={{ uri: selectedPhoto.uri }}
+            <RNImage
+              source={getImageSource(selectedPhoto.uri)}
               style={styles.previewImage}
-              contentFit="cover"
+              resizeMode="cover"
             />
             {selectedPhoto.aiVerified && selectedPhoto.aiAnalysis && (
               <View style={[styles.verifiedBadge, { backgroundColor: colors.success }]}>
@@ -211,7 +223,11 @@ export default function AIScreen() {
               ]}
               onPress={() => setSelectedPhoto(photo)}
             >
-              <Image source={{ uri: photo.uri }} style={styles.thumbImage} contentFit="cover" />
+              <RNImage 
+                source={getImageSource(photo.uri)} 
+                style={styles.thumbImage} 
+                resizeMode="cover" 
+              />
               {photo.aiVerified && (
                 <View style={[styles.thumbBadge, { backgroundColor: colors.success }]}>
                   <IconSymbol name="checkmark" size={10} color="#FFFFFF" />
@@ -272,7 +288,11 @@ export default function AIScreen() {
             onPress={() => setSelectedPhoto(photo)}
           >
             <View style={styles.recentContent}>
-              <Image source={{ uri: photo.uri }} style={styles.recentImage} contentFit="cover" />
+              <RNImage 
+                source={getImageSource(photo.uri)} 
+                style={styles.recentImage} 
+                resizeMode="cover" 
+              />
               <View style={styles.recentInfo}>
                 <Text style={[styles.recentCaption, { color: colors.text }]}>
                   {photo.caption || 'Work photo'}
@@ -551,4 +571,3 @@ const styles = StyleSheet.create({
     fontWeight: FontWeights.semibold,
   },
 });
-

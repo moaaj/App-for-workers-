@@ -96,6 +96,17 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: 'AI Chat',
+          tabBarIcon: ({ color, focused }) => (
+            <View style={focused ? styles.activeIconContainer : undefined}>
+              <IconSymbol size={24} name="brain" color={color} />
+            </View>
+          ),
+        }}
+      />
     </Tabs>
   );
 }

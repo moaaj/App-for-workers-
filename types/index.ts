@@ -37,7 +37,7 @@ export interface Task {
 
 export interface WorkPhoto {
   id: string;
-  uri: string;
+  uri: string | number; // string for URL, number for require() local images
   timestamp: string;
   caption?: string;
   aiVerified: boolean;
